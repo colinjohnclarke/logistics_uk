@@ -1,8 +1,9 @@
 import React, { useState } from "react";
 import driversData from "../data/drivers.json";
-import DriverRow from "./Driver/DriverCard";
+import DriverRow from "./Driver/DriverRow";
 import { Driver } from "../types/driver";
 import SearchBar from "./SearchBar";
+import { activityTypes } from "../types/activitytypes";
 
 function DriverInfo() {
   const [searchData, setSearchData] = useState<Driver[]>([]);
@@ -20,8 +21,11 @@ function DriverInfo() {
         data={drivers}
         setSearchData={setSearchData}
       />
-      <table className="border border-neutral-300 shadow p-2 m-2 w-full">
+      <table className="border border-neutral-300 shadow  w-[100%] pr-10 justify-center items-center">
         <th>Name</th> <th> Vehicle regsitration</th> <th>Activity duration</th>
+        {activityTypes.map((type) => (
+          <th>{type}</th>
+        ))}
         {weekday.map((day) => (
           <th className="text-sm text-neutral-400 text-center">{day}</th>
         ))}

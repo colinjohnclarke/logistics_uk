@@ -1,7 +1,13 @@
 import React from "react";
+import Menu from "../components/Menu";
 
 function Drivers() {
-  return <div>Drivers</div>;
+  return (
+    <div>
+      <Menu />
+      Drivers
+    </div>
+  );
 }
 
 export default Drivers;

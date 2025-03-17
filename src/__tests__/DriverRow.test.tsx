@@ -1,6 +1,6 @@
 import React from "react";
 import { render, screen } from "@testing-library/react";
-import DriverRow from "../components/Driver/DriverCard";
+import DriverRow from "../components/Driver/DriverRow";
 import { Driver } from "../types/driver";
 
 // Mock driver data
@@ -37,6 +37,7 @@ describe("DriverRow Component", () => {
       </table>
     );
 
+    // Check if the driver's name and registration are displayed
     expect(
       screen.getByText(`${mockDriver.forename} ${mockDriver.surname}`)
     ).toBeInTheDocument();
@@ -45,7 +46,7 @@ describe("DriverRow Component", () => {
     ).toBeInTheDocument();
   });
 
-  it("calculates and displays the total activity duration correctly", () => {
+  it("displays the total activity time correctly", () => {
     render(
       <table>
         <tbody>
@@ -54,14 +55,48 @@ describe("DriverRow Component", () => {
       </table>
     );
 
-    const totalDuration = mockDriver.traces.reduce((outerAcc, trace) => {
+    // Calculate the expected total time
+    const totalTime = mockDriver.traces.reduce((outerAcc, trace) => {
       return (
         outerAcc +
         trace.activity.reduce((innerAcc, curr) => innerAcc + curr.duration, 0)
       );
     }, 0);
 
-    expect(screen.getByText(`${totalDuration} mins`)).toBeInTheDocument();
+    // Check if the total time is displayed correctly
+    expect(screen.getByText(totalTime.toString())).toBeInTheDocument();
+  });
+
+  it("displays the activity totals correctly", () => {
+    render(
+      <table>
+        <tbody>
+          <DriverRow driver={mockDriver} />
+        </tbody>
+      </table>
+    );
+
+    // Calculate the expected activity totals
+    const activityTotals = {
+      drive: 75, // 62 + 13
+      work: 0,
+      rest: 20,
+      available: 10,
+    };
+
+    // Check if the activity totals are displayed correctly
+    expect(
+      screen.getByText(activityTotals.drive.toString())
+    ).toBeInTheDocument();
+    expect(
+      screen.getByText(activityTotals.work.toString())
+    ).toBeInTheDocument();
+    expect(
+      screen.getByText(activityTotals.rest.toString())
+    ).toBeInTheDocument();
+    expect(
+      screen.getByText(activityTotals.available.toString())
+    ).toBeInTheDocument();
   });
 
   it("highlights the correct days of the week based on traces", () => {
@@ -73,8 +108,10 @@ describe("DriverRow Component", () => {
       </table>
     );
 
+    // Days of the week
     const week = ["mon", "tues", "wed", "thurs", "fri", "sat", "sun"];
 
+    // Check each day's indicator
     week.forEach((day, i) => {
       const dayElement = screen.getByTestId(`day-${i}`);
       const hasTrace = mockDriver.traces.some((trace) => {
